@@ -39,8 +39,8 @@ export default class Settings extends Component {
             disableNodeSixTasks: false,
 
             // Repositories settings
-            repositories: [{ name: '' }],
-            branches: [{ name: '' }],
+            repositories: [],
+            branches: [],
 
             // Pipelines settings
             serviceEndpoints: []        
@@ -48,6 +48,7 @@ export default class Settings extends Component {
         this.onChangeInput = this.onChangeInput.bind(this);
         this.onClickExport = this.onClickExport.bind(this);
         this.onClickAddRepository = this.onClickAddRepository.bind(this);
+        this.onClickRemoveRepository = this.onClickRemoveRepository.bind(this);
     }
     onChangeInput = (event) => {
         const target = event.target;
@@ -86,11 +87,25 @@ export default class Settings extends Component {
             repositories: repositories
         });
     }
+    onClickRemoveRepository = (index) => {
+        const { repositories } = this.state;
+        repositories.splice(index, 1);
+        this.setState({
+            repositories: repositories
+        });
+    }
     onClickAddBranch = () => {
         const { branches } = this.state;
         branches.push({
             name: ''
         });
+        this.setState({
+            branches: branches
+        });
+    }
+    onClickRemoveBranch = (index) => {
+        const { branches } = this.state;
+        branches.splice(index, 1);
         this.setState({
             branches: branches
         });
@@ -116,19 +131,24 @@ export default class Settings extends Component {
                     <div className='row'>
                         <div className='col-12 text-white text-center pb-5'>
                             <h1>Configure</h1>
-                            <p>Each tab will allow you to enable/disable or configure specific features of the target organiation.</p>
-                            <button className='btn btn-light btn-lg' onClick={() => this.onClickStartBreak()}>Import</button>
+                            <p>Welcome to a web-based application designed to simplify the management of Azure DevOps projects. This application features Bootstrap accordions to organize content, and provides comprehensive tools for configuring organization settings, policies, and connections to Azure, as well as managing repositories, pipelines, work items, and more specific to your project.</p>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-12 text-white text-center pb-5'>
+                            <h2>Organization</h2>
+                            <p>The first section allows you to configure Azure DevOps organization settings, policies, and connections to Azure, providing comprehensive tools for managing your DevOps environment.</p>
                         </div>
                     </div>
                     <div className='row pb-5'>
-                        <div className="accordion" id="organizationGeneralSettingsAccordion">
+                        <div className="accordion" id="organizationSettingsAccordion">
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="organizationGeneralSettingsHeader">
-                                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#organizationGeneralSettingsCollapse" aria-expanded="true" aria-controls="organizationGeneralSettingsCollapse">
-                                        Organization general settings
+                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#organizationGeneralSettingsCollapse" aria-expanded="false" aria-controls="organizationGeneralSettingsCollapse">
+                                        Azure Active Directory, users and extensions
                                     </button>                   
                                 </h2>
-                                <div id="organizationGeneralSettingsCollapse" className="accordion-collapse collapse show" aria-labelledby="organizationGeneralSettingsHeader" data-bs-parent="#settingsAccordion">
+                                <div id="organizationGeneralSettingsCollapse" className="accordion-collapse collapse" aria-labelledby="organizationGeneralSettingsHeader" data-bs-parent="#organizationSettingsAccordion">
                                     <div className="accordion-body">
                                         <div className="mb-3">
                                             <label className="form-label">Target organization name</label>
@@ -157,11 +177,11 @@ export default class Settings extends Component {
                             </div> 
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="organizationPoliciesHeader">
-                                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#organizationPoliciesCollapse" aria-expanded="true" aria-controls="organizationPoliciesCollapse">
-                                        Organization policies
+                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#organizationPoliciesCollapse" aria-expanded="false" aria-controls="organizationPoliciesCollapse">
+                                        Policies
                                     </button>                   
                                 </h2>
-                                <div id="organizationPoliciesCollapse" className="accordion-collapse collapse show" aria-labelledby="organizationPoliciesHeader" data-bs-parent="#settingsAccordion">
+                                <div id="organizationPoliciesCollapse" className="accordion-collapse collapse" aria-labelledby="organizationPoliciesHeader" data-bs-parent="#organizationSettingsAccordion">
                                     <div className="accordion-body">
                                         <div className="mb-3 form-check">
                                             <input className="form-check-input" type="checkbox" name="disallowThirdPartyAccessViaOauth" checked={this.state.disallowThirdPartyAccessViaOauth} onChange={this.onChangeInput} />
@@ -210,11 +230,11 @@ export default class Settings extends Component {
                             </div> 
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="organizationSettingsHeader">
-                                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#organizationSettingsCollapse" aria-expanded="true" aria-controls="organizationSettingsCollapse">
-                                        Organization settings
+                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#organizationSettingsCollapse" aria-expanded="false" aria-controls="organizationSettingsCollapse">
+                                        Settings
                                     </button>                   
                                 </h2>
-                                <div id="organizationSettingsCollapse" className="accordion-collapse collapse show" aria-labelledby="organizationSettingsHeader" data-bs-parent="#settingsAccordion">
+                                <div id="organizationSettingsCollapse" className="accordion-collapse collapse" aria-labelledby="organizationSettingsHeader" data-bs-parent="#organizationSettingsAccordion">
                                     <div className="accordion-body">
                                         <div className="mb-3 form-check">
                                             <input className="form-check-input" type="checkbox" name="disableAnonymousAccessBadges" checked={this.state.disableAnonymousAccessBadges} onChange={this.onChangeInput} />
@@ -259,77 +279,99 @@ export default class Settings extends Component {
                                     </div>
                                 </div>
                             </div> 
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-12 text-white text-center pb-5'>
+                            <h2>Project</h2>
+                            <p>The second section provides configuration options for your Azure DevOps project, including repositories, pipelines, work items, and more, helping you manage your project with ease.</p>
+                        </div>
+                    </div>
+                    <div className='row pb-5'>
+                        <div className="accordion" id="projectSettingsAccordion">
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="repositoriesSettingsHeader">
-                                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#repositoriesSettingsCollapse" aria-expanded="true" aria-controls="repositoriesSettingsCollapse">
-                                        Repositories settings
+                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#repositoriesSettingsCollapse" aria-expanded="false" aria-controls="repositoriesSettingsCollapse">
+                                        Repositories
                                     </button>                   
                                 </h2>               
-                                <div id="repositoriesSettingsCollapse" className="accordion-collapse collapse show" aria-labelledby="repositoriesSettingsHeader" data-bs-parent="#settingsAccordion">
+                                <div id="repositoriesSettingsCollapse" className="accordion-collapse collapse" aria-labelledby="repositoriesSettingsHeader" data-bs-parent="#projectSettingsAccordion">
                                     <div className="accordion-body">
                                         <div className="mb-3">
-                                            <label className="form-label">Repositories name</label>
+                                            <label className="form-label">Repositories name</label><br/>
                                             {this.state.repositories.map((repository, index) => {
                                                 return (
-                                                    <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={repository.name} onChange={this.onChangeRepositoryNameInput} />              
+                                                    <div className="row">
+                                                        <div className="col-10">
+                                                            <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={repository.name} onChange={this.onChangeRepositoryNameInput} />         
+                                                        </div>
+                                                        <div className="col-2">
+                                                            <button type="button" className="btn btn-danger" onClick={() => this.onClickRemoveRepository(index)}>Remove</button>
+                                                        </div>
+                                                    </div>     
                                                 )
                                             })}
-                                            <button type="button" class="btn btn-primary" onClick={() => this.onClickAddRepository()}>Add repository</button>        
+                                            <button type="button" className="btn btn-secondary" onClick={() => this.onClickAddRepository()}>Add repository</button>        
                                         </div>
                                     </div>
                                     <div className="accordion-body">
                                         <div className="mb-3">
-                                            <label className="form-label">Branches name</label>
+                                            <label className="form-label">Branches name</label><br/>
                                             {this.state.branches.map((branch, index) => {
                                                 return (
-                                                    <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={branch.name} onChange={this.onChangeBranchNameInput} />              
+                                                    <div className="row">
+                                                        <div className="col-10">
+                                                            <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={branch.name} onChange={this.onChangeBranchNameInput} />     
+                                                        </div>
+                                                        <div className="col-2">
+                                                            <button type="button" className="btn btn-danger" onClick={() => this.onClickRemoveBranch(index)}>Remove</button>
+                                                        </div>
+                                                    </div>           
                                                 )
                                             })}
-                                            <button type="button" class="btn btn-primary" onClick={() => this.onClickAddBranch()}>Add branch</button>        
+                                            <button type="button" className="btn btn-secondary" onClick={() => this.onClickAddBranch()}>Add branch</button>        
                                         </div>
                                     </div>
                                 </div>
                             </div> 
-
-
-
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="pipelinesSettingsHeader">
                                     <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pipelinesSettingsCollapse" aria-expanded="true" aria-controls="pipelinesSettingsCollapse">
-                                        Pipelines settings
+                                        Pipelines
                                     </button>                   
                                 </h2>
-                                <div id="pipelinesSettingsCollapse" className="accordion-collapse collapse show" aria-labelledby="pipelinesSettingsHeader" data-bs-parent="#settingsAccordion">
+                                <div id="pipelinesSettingsCollapse" className="accordion-collapse collapse show" aria-labelledby="pipelinesSettingsHeader" data-bs-parent="#projectSettingsAccordion">
                                     <div className="accordion-body">
                                         <div className="mb-3">
                                             <label className="form-label">Service endpoints</label>
+                                        
+                                            <p>AzureRm service endpoints</p>
                                             {this.state.serviceEndpoints.map((serviceEndpoint, index) => {
                                                 return (
                                                     <div>
-                                                        <select class="form-select" aria-label="ServiceEndpointType">
-                                                            <option selected>AzureRM</option>
-                                                            <option>GitHub</option>
-                                                        </select>
-                                                        {serviceEndpoint.type === 'AzureRM' &&
-                                                            <div>
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.name} onChange={this.onChangeServiceEndpointNameInput} />
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.subscriptionId} onChange={this.onChangeServiceEndpointSubscriptionIdInput} />
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.subscriptionName} onChange={this.onChangeServiceEndpointSubscriptionNameInput} />
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.tenantId} onChange={this.onChangeServiceEndpointTenantIdInput} />
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.servicePrincipalId} onChange={this.onChangeServiceEndpointServicePrincipalIdInput} />
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.servicePrincipalKey} onChange={this.onChangeServiceEndpointServicePrincipalKeyInput} />
-                                                            </div>
-                                                        }
-                                                        {serviceEndpoint.type === 'GitHub' &&
-                                                            <div>
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.name} onChange={this.onChangeServiceEndpointNameInput} />
-                                                                <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.githubConnectionName} onChange={this.onChangeServiceEndpointGithubConnectionNameInput} />
-                                                            </div>
-                                                        }
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.name} onChange={this.onChangeServiceEndpointNameInput} />
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.subscriptionId} onChange={this.onChangeServiceEndpointSubscriptionIdInput} />
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.subscriptionName} onChange={this.onChangeServiceEndpointSubscriptionNameInput} />
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.tenantId} onChange={this.onChangeServiceEndpointTenantIdInput} />
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.servicePrincipalId} onChange={this.onChangeServiceEndpointServicePrincipalIdInput} />
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.servicePrincipalKey} onChange={this.onChangeServiceEndpointServicePrincipalKeyInput} />
                                                     </div>
                                                 )
                                             })}
-                                            <button type="button" class="btn btn-primary" onClick={() => this.onClickAddServiceEndpoint()}>Add serviceEndpoint</button>        
+                                            <button type="button" className="btn btn-primary" onClick={() => this.onClickAddServiceEndpoint()}>Add serviceEndpoint</button>   
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Launch demo modal</button>
+
+                                            <p>GitHub service endpoints</p>
+                                            {this.state.serviceEndpoints.map((serviceEndpoint, index) => {
+                                                return (
+                                                    <div>
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.name} onChange={this.onChangeServiceEndpointNameInput} />
+                                                        <input className="mb-3 form-control" key={index} type="text" name={index} placeholder="microsoft" value={serviceEndpoint.githubConnectionName} onChange={this.onChangeServiceEndpointGithubConnectionNameInput} />
+                                                    </div>
+                                                )
+                                            })}     
+                                            <button type="button" className="btn btn-primary" onClick={() => this.onClickAddServiceEndpoint()}>Add serviceEndpoint</button>   
+
                                         </div>
                                     </div>
                                 </div>
@@ -340,11 +382,33 @@ export default class Settings extends Component {
                     </div>
                     <div className='row text-center pb-5'>
                         <div className='col-12 text-center'>
-                            <button className='btn btn-light btn-lg' onClick={() => this.onClickExport()}>Export</button>
-                            {/* <button className='btn btn-light btn-lg' onClick={() => this.onClickStartBreak()}>Configure</button> */}
+                            <button className='btn btn-light btn-lg' onClick={() => this.onClickStartBreak()}>Import</button>                   
+                            <button className='btn btn-light btn-lg mx-2' onClick={() => this.onClickExport()}>Export</button>
+                            <button className='btn btn-light btn-lg' onClick={() => this.onClickConfigure()}>Configure</button>
                         </div>
                     </div>
                 </div>
+
+
+
+                <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            ...
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-primary">Save changes</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         )
     }
