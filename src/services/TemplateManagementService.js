@@ -1,9 +1,53 @@
 class TemplateManagementService {
-  constructor(state, filename) {
-    this.state = state;
-    this.filename = filename;
+  convertJson(content) {
+    const data = JSON.parse(content);
+    const transformedData = {
+      organizationGeneralSettings: {
+        targetOrganizationName: data.organization.name,
+        connectToAzureActiveDirectory: data.organization.azure_active_directory !== undefined,
+        tenantId: data.organization.azure_active_directory?.tenant_id || '',
+        usersToAddToOrganiation: '',
+        extensionsToAddToOrganiation: '',
+      },
+      organizationPoliciesSettings: {
+        disallowThirdPartyAccessViaOauth: data.organization.policies.disallow_third_party_application_access_via_oauth,
+        disallowSSHAuthentication: data.organization.policies.disallow_ssh_authentication,
+        logAuditEvents: data.organization.policies.log_audit_events,
+        allowPublicProjects: data.organization.policies.allow_public_projects,
+        additionalProtectionsPublicPackageRegistries: data.organization.policies.additional_protections_public_package_registries,
+        enableAzureActiveDirectoryConditionalAccessPolicyValidation: data.organization.policies.enable_azure_active_directory_conditional_access_policy_validation,
+        disallowExternalGuestAccess: data.organization.policies.disallow_external_guest_access,
+        allowTeamAndProjectAdministratorsToInviteNewUsers: data.organization.policies.allow_team_and_project_administrators_to_invite_new_users,
+        requestAccessEnable: data.organization.policies.request_access.enable,
+        requestAccessUrl: data.organization.policies.request_access.url,
+      },
+      organizationSettings: {
+        disableAnonymousAccessBadges: data.organization.settings.disable_anonymous_access_badges,
+        limitVariablesSetQueueTime: data.organization.settings.limit_variables_set_queue_time,
+        limitJobAuthorizationCurrentProjectNonReleasePipelines: data.organization.settings.limit_job_authorization_current_project_non_release_pipelines,
+        limitJobAuthorizationCurrentProjectReleasePipelines: data.organization.settings.limit_job_authorization_current_project_release_pipelines,
+        protectAccessRepositoriesYamlPipelines: data.organization.settings.protect_access_repositories_yaml_pipelines,
+        disableStageChooser: data.organization.settings.disable_stage_chooser,
+        disableCreationClassicBuildAndClassicReleasePipelines: data.organization.settings.disable_creation_classic_build_and_classic_release_pipelines,
+        disableBuiltInTasks: data.organization.settings.disable_built_in_tasks,
+        disableMarketplaceTasks: data.organization.settings.disable_marketplace_tasks,
+        disableNodeSixTasks: data.organization.settings.disable_node_six_tasks
+      },
+      projectGeneralSettings: {
+          projectName: data.project.project_name,
+          projectDescription: data.project.project_description,
+          projectVisibility: data.project.project_visibility,
+          projectProcessTemplate: data.project.project_process_template,
+          securityGroups: data.project.security_groups
+      },
+      repositoriesSettings: {
+          repositories: data.repository.repositories,
+          branches: data.repository.branches
+      }
+    };
+    return transformedData;
   }
-  generateJson() {
+  generateJson(settings, filename) {
     const json = {
       organization: {
         name: '',
@@ -37,31 +81,43 @@ class TemplateManagementService {
             disable_node_six_tasks: false
         }
       },
+      project: {
+        name: '',
+        description: '',
+        process: '',
+        visibility: '',
+        // "security_groups": [
+        //     {
+        //         "name": "Connectivity approvers",
+        //         "description": "Users who are allowed to approve the deployment of the Terraform configuration to the production environment"
+        //     },
+
+        // ]
+    },
       repository: {
         repositories: []
       }
     };
 
-
-    // Organization general settings
-    if (this.state.targetOrganizationName) {
-      json.organization.name = this.state.targetOrganizationName;
+    // Organization General Settings
+    if (settings.organizationGeneralSettings.targetOrganizationName) {
+      json.organization.name = settings.organizationGeneralSettings.targetOrganizationName;
     }
-    if (this.state.connectToAzureActiveDirectory) {
+    if (settings.organizationGeneralSettings.connectToAzureActiveDirectory) {
       json.organization.azure_active_directory = {
-        tenant_id: this.state.tenantId
+        tenant_id: settings.organizationGeneralSettings.tenantId
       };
     }
-    if (this.state.usersToAddToOrganiation) {
-      const emails = this.state.usersToAddToOrganiation.split(",");
+    if (settings.organizationGeneralSettings.usersToAddToOrganiation) {
+      const emails = settings.organizationGeneralSettings.usersToAddToOrganiation.split(",");
       for (const email of emails) {
         json.organization.users.push({
           email: email
         });
       }
     }
-    if (this.state.extensionsToAddToOrganiation) {
-      const extensions = this.state.extensionsToAddToOrganiation.split(",");
+    if (settings.organizationGeneralSettings.extensionsToAddToOrganiation) {
+      const extensions = settings.organizationGeneralSettings.extensionsToAddToOrganiation.split(",");
       for (const extension of extensions) {
         const [id, publisher_id] = extension.trim().split(".");
         json.organization.extensions.push({
@@ -72,72 +128,86 @@ class TemplateManagementService {
     }
 
     // Organization Policies
-    if (this.state.disallowThirdPartyApplicationAccessViaOauth) {
-      json.organization.policies.disallow_third_party_application_access_via_oauth = this.state.disallowThirdPartyApplicationAccessViaOauth;
+    if (settings.organizationPoliciesSettings.disallowThirdPartyApplicationAccessViaOauth) {
+      json.organization.policies.disallow_third_party_application_access_via_oauth = settings.organizationPoliciesSettings.disallowThirdPartyApplicationAccessViaOauth;
     }
-    if (this.state.disallowSshAuthentication) {
-      json.organization.policies.disallow_ssh_authentication = this.state.disallowSshAuthentication;
+    if (settings.organizationPoliciesSettings.disallowSshAuthentication) {
+      json.organization.policies.disallow_ssh_authentication = settings.organizationPoliciesSettings.disallowSshAuthentication;
     }
-    if (this.state.logAuditEvents) {
-      json.organization.policies.log_audit_events = this.state.logAuditEvents;
+    if (settings.organizationPoliciesSettings.logAuditEvents) {
+      json.organization.policies.log_audit_events = settings.organizationPoliciesSettings.logAuditEvents;
     }
-    if (this.state.allowPublicProjects) {
-      json.organization.policies.allow_public_projects = this.state.allowPublicProjects;
+    if (settings.organizationPoliciesSettings.allowPublicProjects) {
+      json.organization.policies.allow_public_projects = settings.organizationPoliciesSettings.allowPublicProjects;
     }
-    if (this.state.additionalProtectionsPublicPackageRegistries) {
-      json.organization.policies.additional_protections_public_package_registries = this.state.additionalProtectionsPublicPackageRegistries;
+    if (settings.organizationPoliciesSettings.additionalProtectionsPublicPackageRegistries) {
+      json.organization.policies.additional_protections_public_package_registries = settings.organizationPoliciesSettings.additionalProtectionsPublicPackageRegistries;
     }
-    if (this.state.enableAzureActiveDirectoryConditionalAccessPolicyValidation) {
-      json.organization.policies.enable_azure_active_directory_conditional_access_policy_validation = this.state.enableAzureActiveDirectoryConditionalAccessPolicyValidation;
+    if (settings.organizationPoliciesSettings.enableAzureActiveDirectoryConditionalAccessPolicyValidation) {
+      json.organization.policies.enable_azure_active_directory_conditional_access_policy_validation = settings.organizationPoliciesSettings.enableAzureActiveDirectoryConditionalAccessPolicyValidation;
     }
-    if (this.state.disallowExternalGuestAccess) {
-      json.organization.policies.disallow_external_guest_access = this.state.disallowExternalGuestAccess;
+    if (settings.organizationPoliciesSettings.disallowExternalGuestAccess) {
+      json.organization.policies.disallow_external_guest_access = settings.organizationPoliciesSettings.disallowExternalGuestAccess;
     }
-    if (this.state.allowTeamAndProjectAdministratorsToInviteNewUsers) {
-      json.organization.policies.allow_team_and_project_administrators_to_invite_new_users = this.state.allowTeamAndProjectAdministratorsToInviteNewUsers;
+    if (settings.allowTeamAndProjectAdministratorsToInviteNewUsers) {
+      json.organization.policies.allow_team_and_project_administrators_to_invite_new_users = settings.organizationPoliciesSettings.allowTeamAndProjectAdministratorsToInviteNewUsers;
     }
-    if (this.state.requestAccessEnable) {
-      json.organization.policies.request_access.enable = this.state.requestAccessEnable;
+    if (settings.organizationPoliciesSettings.requestAccessEnable) {
+      json.organization.policies.request_access.enable = settings.organizationPoliciesSettings.requestAccessEnable;
     }
-    if (this.state.requestAccessUrl) {
-      json.organization.policies.request_access.url = this.state.requestAccessUrl;
+    if (settings.organizationPoliciesSettings.requestAccessUrl) {
+      json.organization.policies.request_access.url = settings.organizationPoliciesSettings.requestAccessUrl;
     }
 
     // Organization Settings
-    if (this.state.disableAnonymousAccessBadges) {
-      json.organization.settings.disable_anonymous_access_badges = this.state.disableAnonymousAccessBadges;
+    if (settings.organizationSettings.disableAnonymousAccessBadges) {
+      json.organization.settings.disable_anonymous_access_badges = settings.organizationSettings.disableAnonymousAccessBadges;
     }
-    if (this.state.limitVariablesSetQueueTime) {
-      json.organization.settings.limit_variables_set_queue_time = this.state.limitVariablesSetQueueTime;
+    if (settings.organizationSettings.limitVariablesSetQueueTime) {
+      json.organization.settings.limit_variables_set_queue_time = settings.organizationSettings.limitVariablesSetQueueTime;
     }
-    if (this.state.limitJobAuthorizationCurrentProjectNonReleasePipelines) {
-      json.organization.settings.limit_job_authorization_current_project_non_release_pipelines = this.state.limitJobAuthorizationCurrentProjectNonReleasePipelines;
+    if (settings.organizationSettings.limitJobAuthorizationCurrentProjectNonReleasePipelines) {
+      json.organization.settings.limit_job_authorization_current_project_non_release_pipelines = settings.organizationSettings.limitJobAuthorizationCurrentProjectNonReleasePipelines;
     }
-    if (this.state.limitJobAuthorizationCurrentProjectReleasePipelines) {
-      json.organization.settings.limit_job_authorization_current_project_release_pipelines = this.state.limitJobAuthorizationCurrentProjectReleasePipelines;
+    if (settings.organizationSettings.limitJobAuthorizationCurrentProjectReleasePipelines) {
+      json.organization.settings.limit_job_authorization_current_project_release_pipelines = settings.organizationSettings.limitJobAuthorizationCurrentProjectReleasePipelines;
     }
-    if (this.state.protectAccessRepositoriesYamlPipelines) {
-      json.organization.settings.protect_access_repositories_yaml_pipelines = this.state.protectAccessRepositoriesYamlPipelines;
+    if (settings.organizationSettings.protectAccessRepositoriesYamlPipelines) {
+      json.organization.settings.protect_access_repositories_yaml_pipelines = settings.organizationSettings.protectAccessRepositoriesYamlPipelines;
     }
-    if (this.state.disableStageChooser) {
-      json.organization.settings.disable_stage_chooser = this.state.disableStageChooser;
+    if (settings.organizationSettings.disableStageChooser) {
+      json.organization.settings.disable_stage_chooser = settings.organizationSettings.disableStageChooser;
     }
-    if (this.state.disableCreationClassicBuildAndClassicReleasePipelines) {
-      json.organization.settings.disable_creation_classic_build_and_classic_release_pipelines = this.state.disableCreationClassicBuildAndClassicReleasePipelines;
+    if (settings.organizationSettings.disableCreationClassicBuildAndClassicReleasePipelines) {
+      json.organization.settings.disable_creation_classic_build_and_classic_release_pipelines = settings.organizationSettings.disableCreationClassicBuildAndClassicReleasePipelines;
     }
-    if (this.state.disableBuiltInTasks) {
-      json.organization.settings.disable_built_in_tasks = this.state.disableBuiltInTasks;
+    if (settings.organizationSettings.disableBuiltInTasks) {
+      json.organization.settings.disable_built_in_tasks = settings.organizationSettings.disableBuiltInTasks;
     }
-    if (this.state.disableMarketplaceTasks) {
-      json.organization.settings.disable_marketplace_tasks = this.state.disableMarketplaceTasks;
+    if (settings.organizationSettings.disableMarketplaceTasks) {
+      json.organization.settings.disable_marketplace_tasks = settings.organizationSettings.disableMarketplaceTasks;
     }
-    if (this.state.disableNodeSixTasks) {
-      json.organization.settings.disable_node_six_tasks = this.state.disableNodeSixTasks;
+    if (settings.organizationSettings.disableNodeSixTasks) {
+      json.organization.settings.disable_node_six_tasks = settings.organizationSettings.disableNodeSixTasks;
+    }
+
+    // Project settings
+    if (settings.projectGeneralSettings.projectName) {
+      json.project.name = settings.projectGeneralSettings.projectName;
+    }
+    if (settings.projectGeneralSettings.projectDescription) {
+      json.project.description = settings.projectGeneralSettings.projectDescription;
+    }
+    if (settings.projectProcess) {
+      json.project.process = settings.projectGeneralSettings.projectProcess;
+    }
+    if (settings.projectVisibility) {
+      json.project.visibility = settings.projectGeneralSettings.projectVisibility;
     }
 
     // Repositories settings
-    if (this.state.repositories) {
-      for(const repository of this.state.repositories) {
+    if (settings.repositoriesSettings.repositories) {
+      for(const repository of settings.repositoriesSettings.repositories) {
         json.repository.repositories.push({
           name: repository.name
         });
@@ -149,7 +219,7 @@ class TemplateManagementService {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = this.filename;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
