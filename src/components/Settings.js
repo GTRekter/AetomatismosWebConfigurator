@@ -139,6 +139,7 @@ export default class Settings extends Component {
                 }
             }
         }));
+        console.log(this.state.settings);
     }
     handleRepositoriesSettingsUpdate = (updatedSettings) => {
         this.setState(prevState => ({
