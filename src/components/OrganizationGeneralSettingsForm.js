@@ -28,15 +28,11 @@ export default class OrganizationGeneralSettingsForm extends Component {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        this.setState(
-            {
-                [name]: value
-            },
-            () => {
-                // Call the onUpdate function passed from the parent with the updated values
-                this.props.onUpdate(this.state);
-            }
-        );
+        this.setState({
+            [name]: value
+        },() => {
+            this.props.onUpdate(this.state);
+        });
     };
     render() {
         return (

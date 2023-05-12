@@ -78,11 +78,7 @@ export default class Settings extends Component {
           const content = e.target.result;
           const templateManagementService = new TemplateManagementService();
           const data = templateManagementService.convertJson(content); 
-          console.log("data")
-          console.log(data); // Display imported JSON data in the console
           this.setState({ settings: data });
-          console.log("settings")
-          console.log(this.state.settings); // Display imported JSON data in the console
         };
         fileReader.readAsText(event.target.files[0]);
     };
@@ -205,7 +201,7 @@ export default class Settings extends Component {
                                     <div className="accordion-body">
                                         <OrganizationPoliciesForm 
                                             settings={this.state.settings.organizationPoliciesSettings}
-                                            onUpdate={this.handleOrganizationSettingsUpdate} />
+                                            onUpdate={this.handleOrganizationPoliciesSettingsUpdate} />
                                     </div>
                                 </div>
                             </div> 

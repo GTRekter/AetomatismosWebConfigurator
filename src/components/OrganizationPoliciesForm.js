@@ -5,8 +5,8 @@ export default class OrganizationPoliciesForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            disallowThirdPartyAccessViaOauth: false,
-            disallowSSHAuthentication: false,
+            disallowThirdPartyApplicationAccessViaOauth: false,
+            disallowSshAuthentication: false,
             logAuditEvents: true,
             allowPublicProjects: true,
             additionalProtectionsPublicPackageRegistries: true,
@@ -21,8 +21,8 @@ export default class OrganizationPoliciesForm extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps !== this.props) {
             this.setState({
-                disallowThirdPartyAccessViaOauth: this.props.settings.disallowThirdPartyAccessViaOauth || false,
-                disallowSSHAuthentication: this.props.settings.disallowSSHAuthentication || false,
+                disallowThirdPartyApplicationAccessViaOauth: this.props.settings.disallowThirdPartyApplicationAccessViaOauth || false,
+                disallowSshAuthentication: this.props.settings.disallowSshAuthentication || false,
                 logAuditEvents: this.props.settings.logAuditEvents || false,
                 allowPublicProjects: this.props.settings.allowPublicProjects || false,
                 additionalProtectionsPublicPackageRegistries: this.props.settings.additionalProtectionsPublicPackageRegistries || false,
@@ -38,25 +38,21 @@ export default class OrganizationPoliciesForm extends Component {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        this.setState(
-            {
-                [name]: value
-            },
-            () => {
-                // Call the onUpdate function passed from the parent with the updated values
-                this.props.onUpdate(this.state);
-            }
-        );
+        this.setState({
+            [name]: value
+        },() => {
+            this.props.onUpdate(this.state);
+        });
     };
     render() {
         return (
             <div>
                 <div className="mb-3 form-check">
-                    <input className="form-check-input" type="checkbox" name="disallowThirdPartyAccessViaOauth" checked={this.state.disallowThirdPartyAccessViaOauth} onChange={this.onChangeInput} />
+                    <input className="form-check-input" type="checkbox" name="disallowThirdPartyApplicationAccessViaOauth" checked={this.state.disallowThirdPartyApplicationAccessViaOauth} onChange={this.onChangeInput} />
                     <label className="form-check-label">Disallow third party applicationa ccess via OAuth</label>
                 </div>
                 <div className="mb-3 form-check">
-                    <input className="form-check-input" type="checkbox" name="disallowSSHAuthentication" checked={this.state.disallowSSHAuthentication} onChange={this.onChangeInput} />
+                    <input className="form-check-input" type="checkbox" name="disallowSshAuthentication" checked={this.state.disallowSshAuthentication} onChange={this.onChangeInput} />
                     <label className="form-check-label">Disallow SSH Authorization</label>
                 </div>
                 <div className="mb-3 form-check">

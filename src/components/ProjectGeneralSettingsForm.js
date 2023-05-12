@@ -15,6 +15,7 @@ export default class ProjectGeneralSettingsForm extends Component {
     }
     componentDidUpdate(prevProps) {
         if (prevProps !== this.props) {
+            console.log(this.props.settings);
             this.setState({
                 projectName: this.props.settings.projectName || '',
                 projectDescription: this.props.settings.projectDescription || '',
@@ -28,23 +29,22 @@ export default class ProjectGeneralSettingsForm extends Component {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        this.setState(
-            {
-                [name]: value
-            },
-            () => {
-                // Call the onUpdate function passed from the parent with the updated values
-                this.props.onUpdate(this.state);
-            }
-        );
+        this.setState({
+            [name]: value
+        },() => {
+            this.props.onUpdate(this.state);
+        });
     };
     onClickAddSecurityGroup = () => {
         const { securityGroups } = this.state;
         securityGroups.push({
-            name: ''
+            name: '',
+            description: ''
         });
         this.setState({
             securityGroups: securityGroups
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onChangeSecurityGroupNameInput = (event) => {
@@ -55,6 +55,8 @@ export default class ProjectGeneralSettingsForm extends Component {
         updatedSecurityGroups[name].name = target.value;
         this.setState({
             securityGroups: updatedSecurityGroups
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onChangeSecurityGroupDescriptionInput = (event) => {
@@ -62,9 +64,11 @@ export default class ProjectGeneralSettingsForm extends Component {
         const name = target.name;
         const { securityGroups } = this.state;
         const updatedSecurityGroups = [...securityGroups];
-        updatedSecurityGroups[name].description = target.description;
+        updatedSecurityGroups[name].description = target.value;
         this.setState({
             securityGroups: updatedSecurityGroups
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onClickRemoveSecurityGroup = (index) => {
@@ -72,6 +76,8 @@ export default class ProjectGeneralSettingsForm extends Component {
         securityGroups.splice(index, 1);
         this.setState({
             securityGroups: securityGroups
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     render() {
@@ -79,7 +85,7 @@ export default class ProjectGeneralSettingsForm extends Component {
             <div>
                <div className="mb-3">
                     <label className="form-label">Project name</label>
-                    <input type="text" className="form-control" name="projectName" placeholder="LandingZone" value={this.state.projectNameName} onChange={this.onChangeInput} />
+                    <input type="text" className="form-control" name="projectName" placeholder="LandingZone" value={this.state.projectName} onChange={this.onChangeInput} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Project description</label>

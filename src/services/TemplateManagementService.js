@@ -10,8 +10,8 @@ class TemplateManagementService {
         extensionsToAddToOrganiation: '',
       },
       organizationPoliciesSettings: {
-        disallowThirdPartyAccessViaOauth: data.organization.policies.disallow_third_party_application_access_via_oauth,
-        disallowSSHAuthentication: data.organization.policies.disallow_ssh_authentication,
+        disallowThirdPartyApplicationAccessViaOauth: data.organization.policies.disallow_third_party_application_access_via_oauth,
+        disallowSshAuthentication: data.organization.policies.disallow_ssh_authentication,
         logAuditEvents: data.organization.policies.log_audit_events,
         allowPublicProjects: data.organization.policies.allow_public_projects,
         additionalProtectionsPublicPackageRegistries: data.organization.policies.additional_protections_public_package_registries,
@@ -34,10 +34,10 @@ class TemplateManagementService {
         disableNodeSixTasks: data.organization.settings.disable_node_six_tasks
       },
       projectGeneralSettings: {
-          projectName: data.project.project_name,
-          projectDescription: data.project.project_description,
-          projectVisibility: data.project.project_visibility,
-          projectProcessTemplate: data.project.project_process_template,
+          projectName: data.project.name,
+          projectDescription: data.project.description,
+          projectVisibility: data.project.visibility,
+          projectProcessTemplate: data.process,
           securityGroups: data.project.security_groups
       },
       repositoriesSettings: {
@@ -86,14 +86,8 @@ class TemplateManagementService {
         description: '',
         process: '',
         visibility: '',
-        // "security_groups": [
-        //     {
-        //         "name": "Connectivity approvers",
-        //         "description": "Users who are allowed to approve the deployment of the Terraform configuration to the production environment"
-        //     },
-
-        // ]
-    },
+        security_groups: []
+      },
       repository: {
         repositories: []
       }
@@ -198,11 +192,20 @@ class TemplateManagementService {
     if (settings.projectGeneralSettings.projectDescription) {
       json.project.description = settings.projectGeneralSettings.projectDescription;
     }
-    if (settings.projectProcess) {
-      json.project.process = settings.projectGeneralSettings.projectProcess;
+    if (settings.projectGeneralSettings.projectProcessTemplate) {
+      json.project.process = settings.projectGeneralSettings.projectProcessTemplate;
     }
-    if (settings.projectVisibility) {
+    if (settings.projectGeneralSettings.projectVisibility) {
       json.project.visibility = settings.projectGeneralSettings.projectVisibility;
+    }
+    console.log(settings.projectGeneralSettings.securityGroups);
+    if(settings.projectGeneralSettings.securityGroups) {
+      for (const securityGroup of settings.projectGeneralSettings.securityGroups) {
+        json.project.security_groups.push({
+          name: securityGroup.name,
+          description: securityGroup.description
+        });
+      }
     }
 
     // Repositories settings

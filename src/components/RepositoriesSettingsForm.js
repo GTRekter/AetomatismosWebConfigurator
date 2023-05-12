@@ -24,15 +24,11 @@ export default class RepositoriesSettingsForm extends Component {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        this.setState(
-            {
-                [name]: value
-            },
-            () => {
-                // Call the onUpdate function passed from the parent with the updated values
-                this.props.onUpdate(this.state);
-            }
-        );
+        this.setState({
+            [name]: value
+        }, () => {
+            this.props.onUpdate(this.state);
+        });
     };
     onChangeRepositoryNameInput = (event) => {
         const target = event.target;
@@ -42,6 +38,8 @@ export default class RepositoriesSettingsForm extends Component {
         updatedRepositories[name].name = target.value;
         this.setState({
             repositories: updatedRepositories
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onChangeBranchNameInput = (event) => {
@@ -52,6 +50,8 @@ export default class RepositoriesSettingsForm extends Component {
         updatedBranches[name].name = target.value;
         this.setState({
             branches: updatedBranches
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onClickAddRepository = () => {
@@ -61,6 +61,8 @@ export default class RepositoriesSettingsForm extends Component {
         });
         this.setState({
             repositories: repositories
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onClickRemoveRepository = (index) => {
@@ -68,6 +70,8 @@ export default class RepositoriesSettingsForm extends Component {
         repositories.splice(index, 1);
         this.setState({
             repositories: repositories
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onClickAddBranch = () => {
@@ -77,6 +81,8 @@ export default class RepositoriesSettingsForm extends Component {
         });
         this.setState({
             branches: branches
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     onClickRemoveBranch = (index) => {
@@ -84,6 +90,8 @@ export default class RepositoriesSettingsForm extends Component {
         branches.splice(index, 1);
         this.setState({
             branches: branches
+        },() => {
+            this.props.onUpdate(this.state);
         });
     }
     render() {

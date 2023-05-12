@@ -10,8 +10,6 @@ export default class PipelinesSettingsForm extends Component {
         this.onChangeInput = this.onChangeInput.bind(this);
     }
     componentDidUpdate(prevProps) {
-        // console.log('prevProps', prevProps);
-        // console.log('this.props', this.props);
         // if (prevProps !== this.props) {
         //     this.setState({
         //         serviceEndpoints: this.props.settings.serviceEndpoints || []
@@ -22,15 +20,11 @@ export default class PipelinesSettingsForm extends Component {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        this.setState(
-            {
-                [name]: value
-            },
-            () => {
-                // Call the onUpdate function passed from the parent with the updated values
-                this.props.onUpdate(this.state);
-            }
-        );
+        this.setState({
+            [name]: value
+        },() => {
+            this.props.onUpdate(this.state);
+        });
     };
     onClickAddServiceEndpoint = () => {
         const { serviceEndpoints } = this.state;
