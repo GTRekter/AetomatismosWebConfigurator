@@ -1,0 +1,29 @@
+.icon-epic {
+    color: rgb(224, 108, 0);
+}
+.icon-feature {
+    color: rgb(119, 59, 147);
+}
+.icon-userstory, .icon-productbacklogitem {
+    color: rgb(0, 156, 204);
+}
+.icon-task {
+    color: rgb(242, 203, 29);
+}
+.work-items .list-group-item {
+    padding: .5rem 1rem;
+    cursor: pointer;
+}
+.work-items .list-group-item .btn-group {
+    display: none;
+}
+.work-items .list-group-item:hover .btn-group {
+    display: flex;
+}
+.work-items .list-group-item .btn-group .btn:nth-child(2) {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+.work-items .list-group-item .description-tooltip {
+    line-height: 31px;
+}

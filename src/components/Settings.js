@@ -6,6 +6,7 @@ import OrganizationSettingsForm from './OrganizationSettingsForm';
 import ProjectGeneralSettingsForm from './ProjectGeneralSettingsForm';
 import RepositoriesSettingsForm from './RepositoriesSettingsForm';
 import PipelinesSettingsForm from './PipelinesSettingsForm';
+import BoardsSettingsForm from './BoardsSettingsForm';
 import './settings.css';
 
 export default class Settings extends Component {
@@ -51,6 +52,9 @@ export default class Settings extends Component {
                     projectProcessTemplate: 'Agile',
                     securityGroups: []
                 },
+                boardsSettings: {
+                    boards: []
+                },
                 repositoriesSettings: {
                     repositories: [],
                     branches: []
@@ -87,10 +91,6 @@ export default class Settings extends Component {
         const templateManagementService = new TemplateManagementService();
         templateManagementService.generateJson(this.state.settings, filename);
     }
-    onClickImport = () => {
-        console.log(this.state.settings); // Display imported JSON data in the console
-    };
-
 
     handleOrganizationGeneralSettingsUpdate = (updatedSettings) => {
         this.setState(prevState => ({
@@ -136,6 +136,17 @@ export default class Settings extends Component {
             }
         }));
         console.log(this.state.settings);
+    }
+    handleBoardsSettingsUpdate = (updatedSettings) => {
+        this.setState(prevState => ({
+            settings: {
+                ...prevState.settings,
+                boardsSettings: {
+                ...prevState.boardsSettings,
+                ...updatedSettings
+                }
+            }
+        }));
     }
     handleRepositoriesSettingsUpdate = (updatedSettings) => {
         this.setState(prevState => ({
@@ -244,6 +255,20 @@ export default class Settings extends Component {
                                 </div>
                             </div> 
                             <div className="accordion-item">
+                                <h2 className="accordion-header" id="boardsSettingsHeader">
+                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#boardsSettingsCollapse" aria-expanded="false" aria-controls="boardsSettingsCollapse">
+                                        Boards
+                                    </button>                   
+                                </h2>               
+                                <div id="boardsSettingsCollapse" className="accordion-collapse collapse" aria-labelledby="boardsSettingsHeader" data-bs-parent="#projectSettingsAccordion">
+                                    <div className="accordion-body">
+                                        <BoardsSettingsForm 
+                                            settings={this.state.settings.boardsSettings}
+                                            onUpdate={this.handleBoardsSettingsUpdate} />
+                                    </div>
+                                </div>
+                            </div> 
+                            <div className="accordion-item">
                                 <h2 className="accordion-header" id="repositoriesSettingsHeader">
                                     <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#repositoriesSettingsCollapse" aria-expanded="false" aria-controls="repositoriesSettingsCollapse">
                                         Repositories
@@ -292,7 +317,6 @@ export default class Settings extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-default" data-bs-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-secondary" onClick={this.onClickImport}>Import</button>
                             </div>
                         </div>
                     </div>
